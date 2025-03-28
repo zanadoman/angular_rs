@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 async-trait = "0.1.88"
-axum = { version = "0.8.1", features = ["macros"] }
+axum = { version = "0.8.3", features = ["macros"] }
 axum-login = "0.17.0"
 dotenvy = "0.15.7"
 password-auth = "1.0.0"
