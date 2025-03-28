@@ -1,7 +1,12 @@
+#![forbid(unsafe_code)]
+#![deny(warnings)]
+#![warn(clippy::nursery, clippy::pedantic)]
+#![allow(clippy::missing_errors_doc)]
+
 use core::error::Error;
 use std::env;
 
-use axum::{Router, response::Html, routing};
+use sqlx::MySqlPool;
 use tokio::{net::TcpListener, signal};
 use tracing_subscriber::{
     EnvFilter,
@@ -19,16 +24,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .init();
     let listener = TcpListener::bind(&env::var("APP_ADDRESS")?).await?;
     tracing::info!("{listener:?}");
-    axum::serve(
-        listener,
-        Router::new().route(
-            "/",
-            routing::get(async || -> Html<&'static str> {
-                Html("<h1>Hello, World!</h1>")
-            }),
-        ),
-    )
-    .with_graceful_shutdown(async { signal::ctrl_c().await.unwrap() })
-    .await?;
+    let database = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
+    tracing::info!("{database:?}");
+    axum::serve(listener, backend::new(database)?)
+        .with_graceful_shutdown(async { signal::ctrl_c().await.unwrap() })
+        .await?;
     Ok(())
 }

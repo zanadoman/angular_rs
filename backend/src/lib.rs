@@ -1,14 +1,11 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+#![forbid(unsafe_code)]
+#![deny(warnings)]
+#![warn(clippy::nursery, clippy::pedantic)]
+#![allow(clippy::missing_errors_doc)]
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub use router::new;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+mod controllers;
+mod models;
+mod router;
+mod services;
