@@ -47,7 +47,7 @@ impl User {
         if self.name.is_empty() {
             return Err("Name must be at least 1 character long.");
         }
-        if 100 < self.name.len() {
+        if 50 < self.name.len() {
             return Err("Name must not be more than 50 characters long.");
         }
         match (Self::find(database, &self.name)).await {
