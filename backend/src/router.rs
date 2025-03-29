@@ -1,11 +1,12 @@
 use core::error::Error;
 
-use axum::{Router, extract::Request, http::HeaderValue};
-use sqlx::MySqlPool;
-use tower_http::{
-    cors::{Any, CorsLayer},
-    trace::TraceLayer,
+use axum::{
+    Router,
+    extract::Request,
+    http::{HeaderValue, header::CONTENT_TYPE},
 };
+use sqlx::MySqlPool;
+use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::Level;
 
 use crate::services::Authenticator;
@@ -15,8 +16,9 @@ pub fn new(database: MySqlPool) -> Result<Router, Box<dyn Error>> {
     Ok(authentication::router()
         .layer(
             CorsLayer::new()
-                .allow_origin("http://localhost:4200".parse::<HeaderValue>()?)
-                .allow_headers(Any),
+                .allow_credentials(true)
+                .allow_headers([CONTENT_TYPE])
+                .allow_origin("http://127.0.0.1:4200".parse::<HeaderValue>()?),
         )
         .layer(Authenticator::new(database.clone())?)
         .layer(TraceLayer::new_for_http().make_span_with(

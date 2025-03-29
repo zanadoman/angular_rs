@@ -11,18 +11,17 @@ pub async fn register(
     Json(user): Json<User>,
 ) -> impl IntoResponse {
     if let Err(err) = user.validate(&database).await {
-        return (StatusCode::BAD_REQUEST, Json(err)).into_response();
-    }
-    match User::create(&database, &user.name, &user.password).await {
-        Ok(..) => (StatusCode::CREATED, Json("Successful registration."))
-            .into_response(),
-        Err(Error::Database(err)) => {
-            tracing::error!("{err}");
-            (StatusCode::CONFLICT, err.to_string()).into_response()
-        }
-        Err(err) => {
-            tracing::error!("{err}");
-            StatusCode::INTERNAL_SERVER_ERROR.into_response()
+        (StatusCode::BAD_REQUEST, Json(err)).into_response()
+    } else {
+        match User::create(&database, &user.name, &user.password).await {
+            Ok(..) => StatusCode::CREATED.into_response(),
+            Err(Error::Database(err)) => {
+                (StatusCode::CONFLICT, err.to_string()).into_response()
+            }
+            Err(err) => {
+                tracing::error!("{err}");
+                StatusCode::INTERNAL_SERVER_ERROR.into_response()
+            }
         }
     }
 }
@@ -43,7 +42,7 @@ pub async fn login(
             }
         }
         Ok(None) => {
-            (StatusCode::UNAUTHORIZED, "Invalid credential.".to_string())
+            (StatusCode::UNAUTHORIZED, "Invalid credential".to_string())
                 .into_response()
         }
         Err(err) => {

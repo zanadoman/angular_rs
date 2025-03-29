@@ -45,21 +45,21 @@ impl User {
         database: &MySqlPool,
     ) -> Result<(), &'static str> {
         if self.name.is_empty() {
-            return Err("Name must be at least 1 character long.");
+            return Err("Name must be at least 1 character long");
         }
         if 50 < self.name.len() {
-            return Err("Name must not be more than 50 characters long.");
+            return Err("Name must not be more than 50 characters long");
         }
         match (Self::find(database, &self.name)).await {
-            Ok(Some(..)) => return Err("Name already taken."),
+            Ok(Some(..)) => return Err("Name already taken"),
             Err(err) => {
                 tracing::error!("{err}");
-                return Err("Internal server error.");
+                return Err("Internal server error");
             }
             _ => {}
         }
         if self.password.len() < 8 {
-            return Err("Password must be at least 8 characters long.");
+            return Err("Password must be at least 8 characters long");
         }
         Ok(())
     }
