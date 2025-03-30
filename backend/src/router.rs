@@ -18,7 +18,7 @@ pub fn new(database: MySqlPool) -> Result<Router, Box<dyn Error>> {
             CorsLayer::new()
                 .allow_credentials(true)
                 .allow_headers([CONTENT_TYPE])
-                .allow_origin("http://127.0.0.1:4200".parse::<HeaderValue>()?),
+                .allow_origin("http://localhost:4200".parse::<HeaderValue>()?),
         )
         .layer(Authenticator::new(database.clone())?)
         .layer(TraceLayer::new_for_http().make_span_with(
