@@ -18,34 +18,55 @@ export class AppComponent {
   registerForm = this.formBuilder.group({ name: '', password: '' });
 
   register() {
+    console.log('Register request started.')
     this.httpClient.post(
       `${this.apiUrl}/register`,
       this.registerForm.value
     ).subscribe({
-      error: error => window.alert(`${error.status}: ${error.error}`),
-      complete: () => window.alert('Register completed.')
+      error: error => {
+        console.log(`${error}\nRegister request failed.`)
+        window.alert(`${error.status}: ${error.error}`)
+      },
+      complete: () => {
+        console.log('Register request completed.')
+        window.alert('Register completed.')
+      }
     });
   }
 
   login() {
+    console.log('Login request started.')
     this.httpClient.post(
       `${this.apiUrl}/login`,
       this.loginForm.value,
       { withCredentials: true }
     ).subscribe({
-      error: error => window.alert(`${error.status}: ${error.error}`),
-      complete: () => window.alert('Login completed.')
+      error: error => {
+        console.log(`${error}\nLogin request failed.`)
+        window.alert(`${error.status}: ${error.error}`)
+      },
+      complete: () => {
+        console.log('Login request completed.')
+        window.alert('Login completed.')
+      }
     });
   }
 
   logout() {
+    console.log('Logout request started.')
     this.httpClient.post(
       `${this.apiUrl}/logout`,
       null,
       { withCredentials: true }
     ).subscribe({
-      error: error => window.alert(`${error.status}: ${error.error}`),
-      complete: () => window.alert('Logout completed.')
+      error: error => {
+        console.log(`${error}\nLogout request failed.`)
+        window.alert(`${error.status}: ${error.error}`)
+      },
+      complete: () => {
+        console.log('Logout request completed.')
+        window.alert('Logout completed.')
+      }
     });
   }
 }
