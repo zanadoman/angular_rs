@@ -14,8 +14,8 @@ export class AppComponent {
   private httpClient = inject(HttpClient);
   private formBuilder = inject(FormBuilder);
 
-  loginForm = this.formBuilder.group({ name: '', password: '' });
   registerForm = this.formBuilder.group({ name: '', password: '' });
+  loginForm = this.formBuilder.group({ name: '', password: '' });
 
   register() {
     console.log('Register request started.');
