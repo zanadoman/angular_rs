@@ -14,13 +14,13 @@ use crate::services::Authenticator;
 #[tracing::instrument(level = "debug", skip(database))]
 pub fn new(database: MySqlPool) -> Result<Router, Box<dyn Error>> {
     Ok(authentication::router()
+        .layer(Authenticator::new(database.clone())?)
         .layer(
             CorsLayer::new()
                 .allow_credentials(true)
                 .allow_headers([CONTENT_TYPE])
                 .allow_origin("http://localhost:4200".parse::<HeaderValue>()?),
         )
-        .layer(Authenticator::new(database.clone())?)
         .layer(TraceLayer::new_for_http().make_span_with(
             |request: &Request| {
                 tracing::span! {

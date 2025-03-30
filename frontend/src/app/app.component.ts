@@ -29,7 +29,7 @@ export class AppComponent {
       },
       complete: () => {
         console.log('Register request completed.');
-        window.alert('Register completed.');
+        window.alert('Register request completed.');
       }
     });
   }
@@ -47,7 +47,7 @@ export class AppComponent {
       },
       complete: () => {
         console.log('Login request completed.');
-        window.alert('Login completed.');
+        window.alert('Login request completed.');
       }
     });
   }
@@ -65,7 +65,7 @@ export class AppComponent {
       },
       complete: () => {
         console.log('Logout request completed.');
-        window.alert('Logout completed.');
+        window.alert('Logout request completed.');
       }
     });
   }

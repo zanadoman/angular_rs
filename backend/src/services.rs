@@ -1,3 +1,3 @@
-pub use authenticator::Authenticator;
+pub use self::authenticator::Authenticator;
 
 mod authenticator;
