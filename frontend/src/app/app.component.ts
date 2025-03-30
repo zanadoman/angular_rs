@@ -14,16 +14,27 @@ export class AppComponent {
   private httpClient = inject(HttpClient);
   private formBuilder = inject(FormBuilder);
 
-  form = this.formBuilder.group({ name: '', password: '' });
+  loginForm = this.formBuilder.group({ name: '', password: '' });
+  registerForm = this.formBuilder.group({ name: '', password: '' });
+
+  register() {
+    this.httpClient.post(
+      `${this.apiUrl}/register`,
+      this.registerForm.value
+    ).subscribe({
+      error: error => window.alert(`${error.status}: ${error.error}`),
+      complete: () => window.alert('Register completed.')
+    });
+  }
 
   login() {
     this.httpClient.post(
       `${this.apiUrl}/login`,
-      this.form.value,
+      this.loginForm.value,
       { withCredentials: true }
     ).subscribe({
-      error: error => window.alert(error.error),
-      complete: () => window.alert('login completed')
+      error: error => window.alert(`${error.status}: ${error.error}`),
+      complete: () => window.alert('Login completed.')
     });
   }
 
@@ -33,8 +44,8 @@ export class AppComponent {
       null,
       { withCredentials: true }
     ).subscribe({
-      error: error => window.alert(error.error),
-      complete: () => window.alert('logout completed')
+      error: error => window.alert(`${error.status}: ${error.error}`),
+      complete: () => window.alert('Logout completed.')
     });
   }
 }

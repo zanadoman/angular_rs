@@ -1,4 +1,9 @@
-<form [formGroup]="form" (ngSubmit)="login()">
+<form [formGroup]="registerForm" (ngSubmit)="register()">
+  <input formControlName="name" type="text">
+  <input formControlName="password" type="password">
+  <button type="submit">Register</button>
+</form>
+<form [formGroup]="loginForm" (ngSubmit)="login()">
   <input formControlName="name" type="text">
   <input formControlName="password" type="password">
   <button type="submit">Login</button>
