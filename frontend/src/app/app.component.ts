@@ -24,7 +24,7 @@ export class AppComponent {
       this.registerForm.value
     ).subscribe({
       error: error => {
-        console.log(`${error}\nRegister request failed.`)
+        console.log(`${error.error}\nRegister request failed.`)
         window.alert(`${error.status}: ${error.error}`)
       },
       complete: () => {
@@ -42,7 +42,7 @@ export class AppComponent {
       { withCredentials: true }
     ).subscribe({
       error: error => {
-        console.log(`${error}\nLogin request failed.`)
+        console.log(`${error.error}\nLogin request failed.`)
         window.alert(`${error.status}: ${error.error}`)
       },
       complete: () => {
@@ -60,7 +60,7 @@ export class AppComponent {
       { withCredentials: true }
     ).subscribe({
       error: error => {
-        console.log(`${error}\nLogout request failed.`)
+        console.log(`${error.error}\nLogout request failed.`)
         window.alert(`${error.status}: ${error.error}`)
       },
       complete: () => {
