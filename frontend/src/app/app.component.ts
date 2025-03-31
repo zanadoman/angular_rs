@@ -9,7 +9,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  private apiUrl = '//localhost:8080';
+  private apiUrl = '//localhost:3000';
   private httpClient = inject(HttpClient);
   private formBuilder = inject(FormBuilder);
 
