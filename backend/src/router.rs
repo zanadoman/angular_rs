@@ -9,7 +9,7 @@ use sqlx::MySqlPool;
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 use tracing::Level;
 
-use crate::services::Authenticator;
+use crate::Authenticator;
 
 #[tracing::instrument(level = "debug", skip(database))]
 pub fn new(database: MySqlPool) -> Result<Router, Box<dyn Error>> {

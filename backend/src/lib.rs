@@ -5,7 +5,9 @@
 
 pub use self::router::new;
 
+mod authenticator;
 mod handlers;
 mod models;
 mod router;
-mod services;
+
+use self::authenticator::Authenticator;

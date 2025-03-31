@@ -2,7 +2,7 @@ use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
 use axum_login::AuthSession;
 use sqlx::{Error, MySqlPool};
 
-use crate::{models::User, services::Authenticator};
+use crate::{Authenticator, models::User};
 
 #[tracing::instrument(level = "debug", skip(database))]
 #[axum::debug_handler]
