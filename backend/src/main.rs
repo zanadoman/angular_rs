@@ -19,14 +19,14 @@ use tracing_subscriber::{
 async fn main() -> Result<(), Box<dyn Error>> {
     dotenvy::dotenv()?;
     tracing_subscriber::registry()
-        .with(EnvFilter::try_from_default_env()?)
         .with(fmt::layer().with_span_events(FmtSpan::NEW | FmtSpan::CLOSE))
+        .with(EnvFilter::try_from_default_env()?)
         .init();
     let listener = TcpListener::bind(&env::var("APP_ADDRESS")?).await?;
     tracing::info!("{listener:?}");
-    let database = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
-    tracing::info!("{database:?}");
-    axum::serve(listener, backend::new(database)?)
+    let pool = MySqlPool::connect(&env::var("DATABASE_URL")?).await?;
+    tracing::info!("{pool:?}");
+    axum::serve(listener, backend::new(pool)?)
         .with_graceful_shutdown(async { signal::ctrl_c().await.unwrap() })
         .await?;
     Ok(())

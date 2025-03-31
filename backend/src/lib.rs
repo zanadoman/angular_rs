@@ -3,9 +3,9 @@
 #![warn(clippy::nursery, clippy::pedantic)]
 #![allow(clippy::missing_errors_doc)]
 
-pub use router::new;
+pub use self::router::new;
 
-mod controllers;
+mod handlers;
 mod models;
 mod router;
 mod services;

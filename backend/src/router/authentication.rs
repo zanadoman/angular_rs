@@ -1,7 +1,7 @@
 use axum::{Router, routing};
 use sqlx::MySqlPool;
 
-use crate::{controllers::authentication, services::Authenticator};
+use crate::{handlers::authentication, services::Authenticator};
 
 #[tracing::instrument(level = "debug")]
 pub fn router() -> Router<MySqlPool> {
