@@ -4,19 +4,19 @@ use sqlx::{Error, MySqlPool};
 
 use crate::{Authenticator, models::User};
 
-#[tracing::instrument(level = "debug", skip(database))]
 #[axum::debug_handler]
+#[tracing::instrument(level = "debug", skip(pool))]
 pub async fn register(
-    State(database): State<MySqlPool>,
+    State(pool): State<MySqlPool>,
     Json(user): Json<User>,
 ) -> impl IntoResponse {
-    if let Err(err) = user.validate(&database).await {
+    if let Err(err) = user.validate(&pool).await {
         (StatusCode::BAD_REQUEST, Json(err)).into_response()
     } else {
-        match User::create(&database, &user.name, &user.password).await {
-            Ok(..) => StatusCode::CREATED.into_response(),
+        match User::create(&pool, &user.name, &user.password).await {
+            Ok(..) => (StatusCode::CREATED, Json(user.name)).into_response(),
             Err(Error::Database(err)) => {
-                (StatusCode::CONFLICT, err.to_string()).into_response()
+                (StatusCode::CONFLICT, Json(err.to_string())).into_response()
             }
             Err(err) => {
                 tracing::error!("{err}");
@@ -26,8 +26,8 @@ pub async fn register(
     }
 }
 
-#[tracing::instrument(level = "debug", skip(authenticator))]
 #[axum::debug_handler]
+#[tracing::instrument(level = "debug", skip(authenticator))]
 pub async fn login(
     mut authenticator: AuthSession<Authenticator>,
     Json(user): Json<User>,
@@ -38,13 +38,11 @@ pub async fn login(
                 tracing::error!("{err}");
                 StatusCode::INTERNAL_SERVER_ERROR.into_response()
             } else {
-                StatusCode::NO_CONTENT.into_response()
+                (StatusCode::OK, Json(user.name)).into_response()
             }
         }
-        Ok(None) => {
-            (StatusCode::UNAUTHORIZED, "Invalid credential".to_string())
-                .into_response()
-        }
+        Ok(None) => (StatusCode::UNAUTHORIZED, Json("Invalid credentials."))
+            .into_response(),
         Err(err) => {
             tracing::error!("{err}");
             StatusCode::INTERNAL_SERVER_ERROR.into_response()
@@ -52,8 +50,8 @@ pub async fn login(
     }
 }
 
-#[tracing::instrument(level = "debug", skip(authenticator))]
 #[axum::debug_handler]
+#[tracing::instrument(level = "debug", skip(authenticator))]
 pub async fn logout(
     mut authenticator: AuthSession<Authenticator>,
 ) -> impl IntoResponse {
