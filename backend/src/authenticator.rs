@@ -11,12 +11,12 @@ use crate::models::User;
 pub struct Authenticator(MySqlPool);
 
 impl Authenticator {
-    #[tracing::instrument(level = "debug", skip(database))]
+    #[tracing::instrument(level = "debug", skip(pool))]
     pub fn new(
-        database: MySqlPool,
-    ) -> Result<AuthManagerLayer<Authenticator, MemoryStore>, Error> {
+        pool: MySqlPool,
+    ) -> Result<AuthManagerLayer<Self, MemoryStore>, Error> {
         Ok(AuthManagerLayerBuilder::new(
-            Authenticator(database),
+            Self(pool),
             SessionManagerLayer::new(MemoryStore::default())
                 .with_expiry(Expiry::OnInactivity(Duration::days(1)))
                 .with_secure(false),
