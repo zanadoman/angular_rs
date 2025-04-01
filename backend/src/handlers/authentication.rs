@@ -11,7 +11,10 @@ pub async fn register(
     Json(user): Json<User>,
 ) -> impl IntoResponse {
     if let Err(err) = user.validate(&pool).await {
-        (StatusCode::BAD_REQUEST, Json(err)).into_response()
+        err.map_or_else(
+            || StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+            |err| (StatusCode::BAD_REQUEST, Json(err)).into_response(),
+        )
     } else {
         match User::create(&pool, &user.name, &user.password).await {
             Ok(..) => (StatusCode::CREATED, Json(user.name)).into_response(),

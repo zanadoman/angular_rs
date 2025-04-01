@@ -10,9 +10,9 @@ pub struct User {
 }
 
 impl User {
-    #[tracing::instrument(level = "trace", skip(database))]
+    #[tracing::instrument(level = "trace", skip(pool))]
     pub async fn find(
-        database: &MySqlPool,
+        pool: &MySqlPool,
         name: &str,
     ) -> Result<Option<Self>, Error> {
         sqlx::query_as!(
@@ -20,13 +20,13 @@ impl User {
             "SELECT * FROM users WHERE name = ? LIMIT 1;",
             name
         )
-        .fetch_optional(database)
+        .fetch_optional(pool)
         .await
     }
 
-    #[tracing::instrument(level = "trace", skip(database))]
+    #[tracing::instrument(level = "trace", skip(pool))]
     pub async fn create(
-        database: &MySqlPool,
+        pool: &MySqlPool,
         name: &str,
         password: &str,
     ) -> Result<MySqlQueryResult, Error> {
@@ -35,31 +35,31 @@ impl User {
             name,
             password_auth::generate_hash(password)
         )
-        .execute(database)
+        .execute(pool)
         .await
     }
 
-    #[tracing::instrument(level = "trace", skip(database))]
+    #[tracing::instrument(level = "trace", skip(pool))]
     pub async fn validate(
         &self,
-        database: &MySqlPool,
-    ) -> Result<(), &'static str> {
+        pool: &MySqlPool,
+    ) -> Result<(), Option<&'static str>> {
         if self.name.is_empty() {
-            return Err("Name must be at least 1 character long");
+            return Err(Some("Name must be at least 1 character long."));
         }
         if 50 < self.name.len() {
-            return Err("Name must not be more than 50 characters long");
+            return Err(Some("Name must not be more than 50 characters long."));
         }
-        match (Self::find(database, &self.name)).await {
-            Ok(Some(..)) => return Err("Name already taken"),
+        match (Self::find(pool, &self.name)).await {
+            Ok(Some(..)) => return Err(Some("Name already taken.")),
             Err(err) => {
                 tracing::error!("{err}");
-                return Err("Internal server error");
+                return Err(None);
             }
             _ => {}
         }
         if self.password.len() < 8 {
-            return Err("Password must be at least 8 characters long");
+            return Err(Some("Password must be at least 8 characters long."));
         }
         Ok(())
     }
