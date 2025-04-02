@@ -17,7 +17,7 @@ pub async fn register(
         )
     } else {
         match User::create(&pool, &user.name, &user.password).await {
-            Ok(id) => (StatusCode::CREATED, Json(id)).into_response(),
+            Ok(name) => (StatusCode::CREATED, Json(name)).into_response(),
             Err(Error::Database(err)) => {
                 (StatusCode::CONFLICT, Json(err.to_string())).into_response()
             }

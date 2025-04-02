@@ -11,20 +11,6 @@ pub struct User {
 
 impl User {
     #[tracing::instrument(level = "trace", skip(pool))]
-    pub async fn find(
-        pool: &MySqlPool,
-        name: &str,
-    ) -> Result<Option<Self>, Error> {
-        sqlx::query_as!(
-            Self,
-            "SELECT * FROM users WHERE name = ? LIMIT 1;",
-            name
-        )
-        .fetch_optional(pool)
-        .await
-    }
-
-    #[tracing::instrument(level = "trace", skip(pool))]
     pub async fn create(
         pool: &MySqlPool,
         name: &str,
@@ -38,6 +24,20 @@ impl User {
         .execute(pool)
         .await?;
         Ok(name.to_owned())
+    }
+
+    #[tracing::instrument(level = "trace", skip(pool))]
+    pub async fn find(
+        pool: &MySqlPool,
+        name: &str,
+    ) -> Result<Option<Self>, Error> {
+        sqlx::query_as!(
+            Self,
+            "SELECT * FROM users WHERE name = ? LIMIT 1;",
+            name
+        )
+        .fetch_optional(pool)
+        .await
     }
 
     #[tracing::instrument(level = "trace", skip(pool))]
