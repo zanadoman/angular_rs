@@ -1,7 +1,7 @@
 use core::fmt::{self, Debug, Formatter};
 
 use axum_login::AuthUser;
-use sqlx::{Error, MySqlPool, mysql::MySqlQueryResult};
+use sqlx::{Error, MySqlPool};
 
 #[derive(Clone, serde::Deserialize)]
 pub struct User {
@@ -29,14 +29,15 @@ impl User {
         pool: &MySqlPool,
         name: &str,
         password: &str,
-    ) -> Result<MySqlQueryResult, Error> {
+    ) -> Result<String, Error> {
         sqlx::query!(
             "INSERT INTO users VALUES (?, ?);",
             name,
             password_auth::generate_hash(password)
         )
         .execute(pool)
-        .await
+        .await?;
+        Ok(name.to_owned())
     }
 
     #[tracing::instrument(level = "trace", skip(pool))]
